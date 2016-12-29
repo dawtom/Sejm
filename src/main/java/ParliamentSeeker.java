@@ -1,9 +1,6 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.swing.text.html.Option;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -18,7 +15,7 @@ import static java.lang.System.exit;
  */
 public class ParliamentSeeker {
 
-    String json = "";
+    private String json = "";
 
     private String readUrl(String urlString) throws Exception {
         BufferedReader reader = null;
@@ -39,6 +36,7 @@ public class ParliamentSeeker {
         }
 
     }
+
     public void display(Options options) {
         System.out.println(getStringToDisplay(options));
     }
@@ -47,43 +45,39 @@ public class ParliamentSeeker {
         String result = "";
         switch (options.getOptionNumber()){
             case 1:{
-                result = optionNumber1(options);
+                result = executeOptionNumber1(options);
                 break;
             }
             case 2:{
-                result = optionNumber2(options);
+                result = executeOptionNumber2(options);
                 break;
             }
             case 3:{
-                result = optionNumber3(options);
+                result = executeOptionNumber3(options);
                 break;
             }
             case 4:{
-                result = optionNumber4(options);
+                result = executeOptionNumber4(options);
                 break;
             }
             case 5:{
-                result = optionNumber5(options);
+                result = executeOptionNumber5(options);
                 break;
             }
             case 6:{
-                result = optionNumber6(options);
+                result = executeOptionNumber6(options);
                 break;
             }
             case 7:{
-                result = optionNumber7(options);
+                result = executeOptionNumber7(options);
                 break;
             }
         }
 
-
-
-
-
         return result;
     }
 
-    private String optionNumber7(Options options){
+    private String executeOptionNumber7(Options options){
         String result = "";
         String countryCodeTemplate = "IT";
         List<String> idList = idList(options);
@@ -139,7 +133,7 @@ public class ParliamentSeeker {
         return result;
     }
 
-    private String optionNumber6(Options options){
+    private String executeOptionNumber6(Options options){
         String result = "";
         Double tmpMostExpensiveVoyage = 0.0;
         Double maxMostExpensiveVoyage = 0.0;
@@ -201,7 +195,7 @@ public class ParliamentSeeker {
         return result;
     }
 
-    private String optionNumber5(Options options){
+    private String executeOptionNumber5(Options options){
         String result = "";
         Integer tmpDaysAbroad = 0;
         Integer maxDaysAbroad = 0;
@@ -263,7 +257,7 @@ public class ParliamentSeeker {
         return result;
     }
 
-    private String optionNumber4(Options options){
+    private String executeOptionNumber4(Options options){
         String result = "";
         Integer tmpNumberOfVoyages = 0;
         Integer maxNumberOfVoyages = -1 ;
@@ -315,11 +309,14 @@ public class ParliamentSeeker {
         return result;
     }
 
-    private String optionNumber3(Options options){
+    private String executeOptionNumber3(Options options){
         String result = "";
 
         String searchID="";
         Double sumOfPayments = 0.0;
+        Double averagePayments = 0.0;
+        Integer count = 0;
+
 
         try {
             json = readUrl(
@@ -333,15 +330,15 @@ public class ParliamentSeeker {
 
         try{
             JSONObject obj = new JSONObject(json);
-            String next;
+            String next = "";
 
+            count = obj.getInt("Count");
 
-            for (int i = 0; i < 9; i++) {
-
-                for (int j = 0; j < 50; j++) {
+            for (int i = 0; i < count; i++) {
+                for (int j = 0; j < 50 && i < count; j++) {
                     JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(j);
                     JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
+
                     try {
                         sumOfPayments += setSumOfPayments(data);
                     }
@@ -351,11 +348,15 @@ public class ParliamentSeeker {
                         exit(1);
                     }
 
-                    //System.out.println("numer: " + (50*i+j) + "\nid: " + id + "\nposeł: " + tmp);
+                    i++;
                 }
-                next = obj.getJSONObject("Links").getString("next");
+                i--;
+                try {
+                    next = obj.getJSONObject("Links").getString("next");
+                }catch (JSONException e){
 
-//                System.out.println(next);
+                }
+
                 try {
                     json = readUrl(next);
                     obj = new JSONObject(json);
@@ -363,81 +364,19 @@ public class ParliamentSeeker {
                 catch (Exception e){
                     System.out.println(e.toString());
                 }
-
             }
-
-
-
-            for (int i = 0; i < 20; i++) {
-                JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                try {
-                    sumOfPayments += setSumOfPayments(data);
-                }
-                catch (JSONException e){
-                    System.out.println("Something wrong with your JSON");
-                    System.out.println(e.toString());
-                    exit(1);
-                }
-                //System.out.println("numer: " + (450+i) + "\nid: " + id + "\nposeł: " + tmp);
-            }
-            if (options.getParliamentTerm() == 7){
-                for (int i = 20; i < 50; i++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                    JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                    try {
-                        sumOfPayments += setSumOfPayments(data);
-                    }
-                    catch (JSONException e){
-                        System.out.println("Something wrong with your JSON");
-                        System.out.println(e.toString());
-                        exit(1);
-                    }
-                }
-                next = obj.getJSONObject("Links").getString("next");
-
-//                System.out.println(next);
-                try {
-                    json = readUrl(next);
-                    obj = new JSONObject(json);
-                }
-                catch (Exception e){
-                    System.out.println(e.toString());
-                }
-
-                for (int i = 0; i < 13; i++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                    JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                    try {
-                        sumOfPayments += setSumOfPayments(data);
-                    }
-                    catch (JSONException e){
-                        System.out.println("Something wrong with your JSON");
-                        System.out.println(e.toString());
-                        exit(1);
-                    }
-                }
-
-
-            }
-
         }
         catch (Exception e){
             System.out.println(e.toString());
         }
 
-        result = String.format("%.2f",sumOfPayments);
-
-
-
+        averagePayments = sumOfPayments/count;
+        result = String.format("%.2f",averagePayments);
 
         return result;
     }
 
-    private String optionNumber2(Options options) {
+    private String executeOptionNumber2(Options options) {
         String result = "";
         String searchID="";
         Double drobneNaprawy = 0.0;
@@ -456,25 +395,30 @@ public class ParliamentSeeker {
 
         try{
             JSONObject obj = new JSONObject(json);
-            String next;
+            String next = "";
 
+            Integer count = obj.getInt("Count");
 
-            for (int i = 0; i < 9 && !findMember; i++) {
-
-                for (int j = 0; j < 50 && !findMember; j++) {
+            for (int i = 0; i < count && !findMember; i++) {
+                for (int j = 0; j < 50 && i < count && !findMember; j++) {
                     JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(j);
                     JSONObject data = res.getJSONObject("data");
 //                System.out.println(data.toString());
                     String tmp = data.getString("ludzie.nazwa");
                     if (tmp.equals(searchName)){
                         searchID = res.getString("id");
-                        System.out.println(searchID);
                         findMember = true;
                     }
-                }
-                next = obj.getJSONObject("Links").getString("next");
 
-//                System.out.println(next);
+                    i++;
+                }
+                i--;
+                try {
+                    next = obj.getJSONObject("Links").getString("next");
+                }catch (JSONException e){
+
+                }
+
                 try {
                     json = readUrl(next);
                     obj = new JSONObject(json);
@@ -482,65 +426,7 @@ public class ParliamentSeeker {
                 catch (Exception e){
                     System.out.println(e.toString());
                 }
-
             }
-
-
-
-            for (int i = 0; i < 20 && !findMember; i++) {
-                JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                String ludzieNazwa = data.getString("ludzie.nazwa");
-                if (ludzieNazwa.equals(searchName)){
-                    findMember=true;
-                    searchID = res.getString("id");
-                    //System.out.println(searchID);
-                    System.out.println(searchID);
-
-                }
-            }
-            if (options.getParliamentTerm() == 7){
-                for (int i = 20; i < 50 && !findMember; i++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                    JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                    String ludzieNazwa = data.getString("ludzie.nazwa");
-                    if (ludzieNazwa.equals(searchName)){
-                        findMember=true;
-                        searchID = res.getString("id");
-                        //System.out.println(searchID);
-                        System.out.println(searchID);
-
-                    }
-                }
-                next = obj.getJSONObject("Links").getString("next");
-
-//                System.out.println(next);
-                try {
-                    json = readUrl(next);
-                    obj = new JSONObject(json);
-                }
-                catch (Exception e){
-                    System.out.println(e.toString());
-                }
-                for (int i = 0; i < 13 && !findMember; i++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                    JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                    String ludzieNazwa = data.getString("ludzie.nazwa");
-                    if (ludzieNazwa.equals(searchName)){
-                        findMember=true;
-                        searchID = res.getString("id");
-                        //System.out.println(searchID);
-                        System.out.println(searchID);
-
-
-                    }
-                }
-
-            }
-
         }
         catch (Exception e){
             System.out.println("Caught exception:\n" + e.toString());
@@ -560,7 +446,7 @@ public class ParliamentSeeker {
                         .getJSONArray("roczniki")
                         .getJSONObject(0).getJSONArray("pola").getString(12));
                 //System.out.println(drobneNaprawy.toString());
-                result = drobneNaprawy.toString();
+                result = "id: " + searchID + "\nname: " + searchName + "\ndrobne naprawy: " + drobneNaprawy.toString();
             }
             catch (JSONException e){
                 //TODO handle all JSON exceptions
@@ -574,7 +460,7 @@ public class ParliamentSeeker {
         return result;
     }
 
-    private String optionNumber1(Options options) {
+    private String executeOptionNumber1(Options options) {
         String result = "";
         String searchID="";
         Double sumOfPayments = 0.0;
@@ -593,12 +479,12 @@ public class ParliamentSeeker {
 
         try{
             JSONObject obj = new JSONObject(json);
-            String next;
+            String next = "";
 
+            Integer count = obj.getInt("Count");
 
-            for (int i = 0; i < 9 && !findMember; i++) {
-
-                for (int j = 0; j < 50 && !findMember; j++) {
+            for (int i = 0; i < count && !findMember; i++) {
+                for (int j = 0; j < 50 && i < count && !findMember; j++) {
                     JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(j);
                     JSONObject data = res.getJSONObject("data");
 //                System.out.println(data.toString());
@@ -617,11 +503,16 @@ public class ParliamentSeeker {
 
                         findMember = true;
                     }
-                    //System.out.println("numer: " + (50*i+j) + "\nid: " + id + "\nposeł: " + tmp);
+                    i++;
                 }
-                next = obj.getJSONObject("Links").getString("next");
+                i--;
 
-//                System.out.println(next);
+                try {
+                    next = obj.getJSONObject("Links").getString("next");
+                }catch (JSONException e){
+
+                }
+
                 try {
                     json = readUrl(next);
                     obj = new JSONObject(json);
@@ -629,82 +520,7 @@ public class ParliamentSeeker {
                 catch (Exception e){
                     System.out.println(e.toString());
                 }
-
             }
-
-
-
-            for (int i = 0; i < 20 && !findMember; i++) {
-                JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                String ludzieNazwa = data.getString("ludzie.nazwa");
-                if (ludzieNazwa.equals(searchName)){
-                    findMember=true;
-
-                    try {
-                        sumOfPayments = setSumOfPayments(data);
-                    }
-                    catch (JSONException e){
-                        System.out.println("Something wrong with your JSON");
-                        System.out.println(e.toString());
-                        exit(1);
-                    }
-                }
-                //System.out.println("numer: " + (450+i) + "\nid: " + id + "\nposeł: " + tmp);
-            }
-            if (options.getParliamentTerm() == 7){
-                for (int i = 20; i < 50 && !findMember; i++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                    JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                    String ludzieNazwa = data.getString("ludzie.nazwa");
-                    if (ludzieNazwa.equals(searchName)){
-                        findMember=true;
-
-                        try {
-                            sumOfPayments = setSumOfPayments(data);
-                        }
-                        catch (JSONException e){
-                            System.out.println("Something wrong with your JSON");
-                            System.out.println(e.toString());
-                            exit(1);
-                        }
-                    }
-                    //System.out.println("numer: " + (450+i) + "\nid: " + id + "\nposeł: " + tmp);
-                }
-                next = obj.getJSONObject("Links").getString("next");
-
-//                System.out.println(next);
-                try {
-                    json = readUrl(next);
-                    obj = new JSONObject(json);
-                }
-                catch (Exception e){
-                    System.out.println(e.toString());
-                }
-                for (int i = 0; i < 13 && !findMember; i++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                    JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                    String ludzieNazwa = data.getString("ludzie.nazwa");
-                    if (ludzieNazwa.equals(searchName)){
-                        findMember=true;
-
-                        try {
-                            sumOfPayments = setSumOfPayments(data);
-                        }
-                        catch (JSONException e){
-                            System.out.println("Something wrong with your JSON");
-                            System.out.println(e.toString());
-                            exit(1);
-                        }
-                    }
-                    //System.out.println("numer: " + (450+i) + "\nid: " + id + "\nposeł: " + tmp);
-                }
-
-            }
-
         }
         catch (Exception e){
             System.out.println(e.toString());
@@ -756,20 +572,23 @@ public class ParliamentSeeker {
 
         try{
             JSONObject obj = new JSONObject(json);
-            String next;
+            String next = "";
 
+            Integer count = obj.getInt("Count");
 
-            for (int i = 0; i < 9 ; i++) {
-
-                for (int j = 0; j < 50; j++) {
+            for (int i = 0; i < count; i++) {
+                for (int j = 0; j < 50 && i < count; j++) {
                     JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(j);
                     result.add(res.getString("id"));
-
-                    //System.out.println("numer: " + (50*i+j) + "\nid: " + id + "\nposeł: " + tmp);
+                    i++;
                 }
-                next = obj.getJSONObject("Links").getString("next");
+                i--;
+                try {
+                    next = obj.getJSONObject("Links").getString("next");
+                }catch (JSONException e){
 
-//                System.out.println(next);
+                }
+
                 try {
                     json = readUrl(next);
                     obj = new JSONObject(json);
@@ -777,36 +596,6 @@ public class ParliamentSeeker {
                 catch (Exception e){
                     System.out.println(e.toString());
                 }
-
-            }
-
-
-
-            for (int i = 0; i < 20; i++) {
-                JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                result.add(res.getString("id"));
-            }
-            if (options.getParliamentTerm() == 7){
-                for (int i = 20; i < 50; i++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                    result.add(res.getString("id"));
-                }
-
-                next = obj.getJSONObject("Links").getString("next");
-
-//                System.out.println(next);
-                try {
-                    json = readUrl(next);
-                    obj = new JSONObject(json);
-                }
-                catch (Exception e){
-                    System.out.println(e.toString());
-                }
-                for (int i = 0; i < 13; i++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                    result.add(res.getString("id"));
-                }
-
             }
 
         }
@@ -820,82 +609,3 @@ public class ParliamentSeeker {
     }
 
 }
-
-/*        String json = "";
-        String searchID="";
-        try {
-            json = readUrl(
-                    "https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=8" );
-        }
-        catch (Exception e){
-            System.out.println(e.toString());
-        }
--
-        System.out.println( json );
-        System.out.println("\nLorem ipsum\n");
-
-        try{
-            JSONObject obj = new JSONObject(json);
-            String next;
-            String searchName = "Ewa Kopacz";
-
-            boolean findEwaKopacz = false;
-            Integer numerEwy=0;
-            for (int i = 0; i < 9; i++) {
-
-                for (int j = 0; j < 50; j++) {
-                    JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(j);
-                    JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                    String id = res.getString("id");
-                    String tmp = data.getString("ludzie.nazwa");
-                    if (tmp.equals(searchName)){
-                        searchID = res.getString("id");
-                    }
-                    //System.out.println("numer: " + (50*i+j) + "\nid: " + id + "\nposeł: " + tmp);
-                }
-                next = obj.getJSONObject("Links").getString("next");
-
-//                System.out.println(next);
-                try {
-                    json = readUrl(next);
-                    obj = new JSONObject(json);
-                }
-                catch (Exception e){
-                    System.out.println(e.toString());
-                }
-
-            }
-
-
-
-            for (int i = 0; i < 20; i++) {
-                JSONObject res = obj.getJSONArray("Dataobject").getJSONObject(i);
-                JSONObject data = res.getJSONObject("data");
-//                System.out.println(data.toString());
-                String id = res.getString("id");
-                String tmp = data.getString("ludzie.nazwa");
-                if (tmp.equals("Ewa Kopacz")){
-                    findEwaKopacz=true;
-                }
-                //System.out.println("numer: " + (450+i) + "\nid: " + id + "\nposeł: " + tmp);
-            }
-            System.out.println(searchID);
-
-
-
-
-        }
-        catch (Exception e){
-            System.out.println(e.toString());
-        }
-
-        try {
-            json = readUrl(
-                    "https://api-v3.mojepanstwo.pl/dane/poslowie/" + searchID + ".json?" );
-            Double value = new JSONObject(json).getJSONObject("data").getDouble("poslowie.wartosc_biuro_biuro");
-            System.out.println(value);
-        }
-        catch (Exception e){
-            System.out.println(e.toString());
-        }*/
