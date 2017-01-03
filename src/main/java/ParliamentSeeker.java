@@ -41,7 +41,7 @@ public class ParliamentSeeker {
         System.out.println(getStringToDisplay(options));
     }
 
-    private String getStringToDisplay(Options options) {
+    public String getStringToDisplay(Options options) {
         String result = "";
         switch (options.getOptionNumber()){
             case 1:{
@@ -456,7 +456,8 @@ public class ParliamentSeeker {
                         .getJSONArray("roczniki")
                         .getJSONObject(0).getJSONArray("pola").getString(12));
                 //System.out.println(drobneNaprawy.toString());
-                result = "id: " + searchID + "\nname: " + searchName + "\ndrobne naprawy: " + drobneNaprawy.toString();
+                result = "id: " + searchID + "\nname: " + searchName + "\ndrobne naprawy: "
+                        + String.format("%.2f",drobneNaprawy);
             }
             catch (JSONException e){
                 System.out.println("Internal application error: \n" + e.toString());
