@@ -92,7 +92,7 @@ public class ParliamentSeeker {
                 json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/"+ id + ".json?layers[]=wyjazdy");
             }
             catch (Exception e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
                 exit(1);
             }
 
@@ -113,14 +113,14 @@ public class ParliamentSeeker {
                          }
                     }
                     catch (JSONException e2){
-                        System.out.println(e2.toString());
+                        System.out.println("Internal application error: \n" + e.toString());
                         exit(1);
                     }
                 }
 
                 System.out.println(hasVisitedItaly.toString() + "     processing...");
             }catch (JSONException e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
                 exit(1);
             }
         }
@@ -147,7 +147,7 @@ public class ParliamentSeeker {
                 json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/"+ id + ".json?layers[]=wyjazdy");
             }
             catch (Exception e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
                 exit(1);
             }
 
@@ -169,7 +169,8 @@ public class ParliamentSeeker {
 
                     }
                     catch (JSONException e2){
-                        System.out.println(e2.toString());
+                        System.out.println("Internal application error: \n" + e.toString());
+                        exit(1);
                     }
                 }
 
@@ -180,7 +181,7 @@ public class ParliamentSeeker {
                 }
                 System.out.println(tmpMostExpensiveVoyage + "  ::  " + maxMostExpensiveVoyage  + "      processing...");
             }catch (JSONException e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
                 exit(1);
             }
         }
@@ -209,7 +210,7 @@ public class ParliamentSeeker {
                 json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/"+ id + ".json?layers[]=wyjazdy");
             }
             catch (Exception e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
                 exit(1);
             }
 
@@ -231,7 +232,8 @@ public class ParliamentSeeker {
 
                     }
                     catch (JSONException e2){
-                        System.out.println(e.toString());
+                        System.out.println("Internal application error: \n" + e.toString());
+                        exit(1);
                     }
                 }
 
@@ -242,7 +244,7 @@ public class ParliamentSeeker {
                 }
                 System.out.println(tmpDaysAbroad + "  ::  " + maxDaysAbroad  + "      processing...");
             }catch (JSONException e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
                 exit(1);
             }
         }
@@ -270,7 +272,7 @@ public class ParliamentSeeker {
                 json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/"+ id + ".json?layers[]=wyjazdy");
             }
             catch (Exception e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
                 exit(1);
             }
 
@@ -297,7 +299,7 @@ public class ParliamentSeeker {
                 }
                 System.out.println(tmpNumberOfVoyages + "  ::  " + maxNumberOfVoyages  + "      processing...");
             }catch (JSONException e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
                 exit(1);
             }
         }
@@ -325,7 +327,8 @@ public class ParliamentSeeker {
 
         }
         catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println("Internal application error: \n" + e.toString());
+            exit(1);
         }
 
         try{
@@ -354,7 +357,8 @@ public class ParliamentSeeker {
                 try {
                     next = obj.getJSONObject("Links").getString("next");
                 }catch (JSONException e){
-
+                    System.out.println("Internal application error: \n" + e.toString());
+                    exit(1);
                 }
 
                 try {
@@ -362,12 +366,14 @@ public class ParliamentSeeker {
                     obj = new JSONObject(json);
                 }
                 catch (Exception e){
-                    System.out.println(e.toString());
+                    System.out.println("Internal application error: \n" + e.toString());
+                    exit(1);
                 }
             }
         }
         catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println("Internal application error: \n" + e.toString());
+            exit(1);
         }
 
         averagePayments = sumOfPayments/count;
@@ -390,7 +396,8 @@ public class ParliamentSeeker {
 
         }
         catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println("Internal application error: \n" + e.toString());
+            exit(1);
         }
 
         try{
@@ -416,7 +423,8 @@ public class ParliamentSeeker {
                 try {
                     next = obj.getJSONObject("Links").getString("next");
                 }catch (JSONException e){
-
+                    System.out.println("Internal application error: \n" + e.toString());
+                    exit(1);
                 }
 
                 try {
@@ -424,12 +432,13 @@ public class ParliamentSeeker {
                     obj = new JSONObject(json);
                 }
                 catch (Exception e){
-                    System.out.println(e.toString());
-                }
+                    System.out.println("Internal application error: \n" + e.toString());
+                    exit(1);                }
             }
         }
         catch (Exception e){
             System.out.println("Caught exception:\n" + e.toString());
+            exit(1);
         }
 
         if (findMember){
@@ -437,7 +446,8 @@ public class ParliamentSeeker {
                 json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/" + searchID + ".json?layers[]=wydatki");
             }
             catch (Exception e){
-                System.out.println(e.toString());
+                System.out.println("Internal application error: \n" + e.toString());
+                exit(1);
             }
 
             try {
@@ -449,7 +459,8 @@ public class ParliamentSeeker {
                 result = "id: " + searchID + "\nname: " + searchName + "\ndrobne naprawy: " + drobneNaprawy.toString();
             }
             catch (JSONException e){
-                //TODO handle all JSON exceptions
+                System.out.println("Internal application error: \n" + e.toString());
+                exit(1);
             }
 
         }
@@ -474,7 +485,8 @@ public class ParliamentSeeker {
 
         }
         catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println("Internal application error: \n" + e.toString());
+            exit(1);
         }
 
         try{
@@ -510,7 +522,8 @@ public class ParliamentSeeker {
                 try {
                     next = obj.getJSONObject("Links").getString("next");
                 }catch (JSONException e){
-
+                    System.out.println("Internal application error: \n" + e.toString());
+                    exit(1);
                 }
 
                 try {
@@ -518,12 +531,14 @@ public class ParliamentSeeker {
                     obj = new JSONObject(json);
                 }
                 catch (Exception e){
-                    System.out.println(e.toString());
+                    System.out.println("Internal application error: \n" + e.toString());
+                    exit(1);
                 }
             }
         }
         catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println("Internal application error: \n" + e.toString());
+            exit(1);
         }
 
         if (findMember){
@@ -567,7 +582,8 @@ public class ParliamentSeeker {
 
         }
         catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println("Internal application error: \n" + e.toString());
+            exit(1);
         }
 
         try{
@@ -594,13 +610,15 @@ public class ParliamentSeeker {
                     obj = new JSONObject(json);
                 }
                 catch (Exception e){
-                    System.out.println(e.toString());
+                    System.out.println("Internal application error: \n" + e.toString());
+                    exit(1);
                 }
             }
 
         }
         catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println("Internal application error: \n" + e.toString());
+            exit(1);
         }
 
 

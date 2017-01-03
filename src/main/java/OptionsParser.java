@@ -66,12 +66,14 @@ public class OptionsParser {
             try {
                 tmpOptions.setMemberOfParliamentFirstName(args[2]);
             }catch (ArrayIndexOutOfBoundsException e){
-                System.out.println("Third argument necessary" + message);;
+                System.out.println("Third argument necessary" + message);
+                exit(1);
             }
             try {
                 tmpOptions.setMemberOfParliamentLastName(args[3]);
             }catch (ArrayIndexOutOfBoundsException e){
-                System.out.println("Third argument necessary" + message);;
+                System.out.println("Fourth argument necessary" + message);
+                exit(1);
             }
         }
 
