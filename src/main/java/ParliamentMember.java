@@ -20,11 +20,11 @@ public class ParliamentMember {
     private List<Voyage> voyages = new ArrayList<Voyage>();
     private boolean hasVisitedItaly;
 
-    public JSONObject getPaymentsLayer() {
+    private JSONObject getPaymentsLayer() {
         return paymentsLayer;
     }
 
-    public void setPaymentsLayer(JSONObject paymentsLayer) {
+    private void setPaymentsLayer(JSONObject paymentsLayer) {
         this.paymentsLayer = paymentsLayer;
     }
 
@@ -94,6 +94,8 @@ public class ParliamentMember {
         }
         return result;
     }
+
+
     public void setId(String id) {
         this.id = id;
     }

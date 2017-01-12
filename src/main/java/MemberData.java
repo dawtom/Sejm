@@ -23,6 +23,7 @@ public class MemberData {
         return ludzieNazwa;
     }
 
+
     public void setLudzieNazwa(String ludzieNazwa) {
         this.ludzieNazwa = ludzieNazwa;
     }

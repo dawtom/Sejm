@@ -7,6 +7,7 @@ import static java.lang.System.setOut;
 public class OptionsParser {
 
 
+
     public Options parseOptions(String [] args){
         Options tmpOptions = new Options();
         String message = "\nCorrect arguments are: <numberOfTerm> <numberOfOption> <FirstName> <LastName> \n" +

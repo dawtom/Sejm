@@ -12,6 +12,7 @@ public class Options {
         return parliamentTerm;
     }
 
+
     public void setParliamentTerm(Integer parliamentTerm) {
         this.parliamentTerm = parliamentTerm;
     }

@@ -6,5 +6,6 @@ public class Application {
         Options options = new OptionsParser().parseOptions(args);
         ParliamentSeeker parliamentSeeker = new ParliamentSeeker();
         parliamentSeeker.display(options);
+
     }
 }

@@ -82,7 +82,7 @@ public class ParliamentSeeker {
         List<ParliamentMember> idList = memberList(options);
         List<String> resultList = new LinkedList<String>();
 
-        ParliamentMember parliamentMember = null;
+        ParliamentMember parliamentMember;
         for (ParliamentMember member :
                 idList) {
             try {
@@ -112,10 +112,10 @@ public class ParliamentSeeker {
 
     private String getMostExpensiveVoyageOfMemberOpNo6(Options options){
         String result = "";
-        Double tmpMostExpensiveVoyage = 0.0;
+        Double tmpMostExpensiveVoyage;
         Double maxMostExpensiveVoyage = 0.0;
         List<ParliamentMember> idList = memberList(options);
-        ParliamentMember parliamentMember = null;
+        ParliamentMember parliamentMember;
         ParliamentMember mostExpensiveVoyageMember = null;
 
         for (ParliamentMember  member :
@@ -159,11 +159,11 @@ public class ParliamentSeeker {
     }
 
     private String getMaxNumberOfDaysAbroadOpNo5(Options options){
-        String result = "";
-        Integer tmpDaysAbroad = 0;
+        String result;
+        Integer tmpDaysAbroad;
         Integer maxDaysAbroad = 0;
         List<ParliamentMember> idList = memberList(options);
-        ParliamentMember parliamentMember = null;
+        ParliamentMember parliamentMember;
         ParliamentMember maxDaysAbroadMember=null;
 
         for (ParliamentMember member :
@@ -203,10 +203,10 @@ public class ParliamentSeeker {
     }
 
     private String getMaxNumberOfVoyagesOpNo4(Options options){
-        String result = "";
-        Integer tmpNumberOfVoyages = 0;
+        String result;
+        Integer tmpNumberOfVoyages;
         Integer maxNumberOfVoyages = -1 ;
-        ParliamentMember parliamentMember = null;
+        ParliamentMember parliamentMember;
         ParliamentMember maxNumberOfVoyagesMember = null;
 
         List<ParliamentMember> members = memberList(options);
@@ -244,11 +244,12 @@ public class ParliamentSeeker {
     }
 
     private String getAverageSumOfPaymentsOpNo3(Options options){
-        String result = "";
+
+        String result;
         Double sumOfPayments = 0.0;
-        Double averagePayments = 0.0;
+        Double averagePayments;
         Integer count = 0;
-        ParliamentMember parliamentMember = null;
+        ParliamentMember parliamentMember;
 
         try {
             json = readUrl(
@@ -308,7 +309,6 @@ public class ParliamentSeeker {
 
     private String getDrobneNaprawyPaymentsWithGivenNameOpNo2(Options options) {
         String result = "";
-        String searchID="";
         Double drobneNaprawy = 0.0;
         boolean findMember = false;
         String searchName = options.getMemberOfParliamentFirstName() + " " + options.getMemberOfParliamentLastName();
@@ -335,7 +335,6 @@ public class ParliamentSeeker {
 
                     if (parliamentMember.getName().equals(searchName)){
                         findMember = true;
-                        searchID = parliamentMember.getId();
                     }
                     i++;
                 }
@@ -391,7 +390,7 @@ public class ParliamentSeeker {
 
         try{
             JSONObject obj = new JSONObject(json);
-            String next = "";
+            String next;
 
             Integer count = obj.getInt("Count");
 
@@ -436,7 +435,7 @@ public class ParliamentSeeker {
 
     //Create list of all members from specified term
     private List<ParliamentMember> memberList(Options options){
-        ParliamentMember parliamentMember = null;
+        ParliamentMember parliamentMember;
         List<ParliamentMember> result = new ArrayList<ParliamentMember>();
         try {
             json = readUrl(

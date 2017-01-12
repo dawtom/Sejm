@@ -11,6 +11,7 @@ public class Voyage {
     String liczbaDni;
     String kosztSuma;
 
+
     public String getCountryCode() {
         return countryCode;
     }
