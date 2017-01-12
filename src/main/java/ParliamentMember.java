@@ -2,7 +2,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static java.lang.System.exit;
@@ -13,16 +15,17 @@ import static java.lang.System.exit;
 public class ParliamentMember {
     private String id = "";
     private String name = "";
-    private JSONObject data;
-    private JSONObject payments;
+    private MemberData data;
+    private JSONObject paymentsLayer;
     private List<Voyage> voyages = new ArrayList<Voyage>();
+    private boolean hasVisitedItaly;
 
-    public JSONObject getPayments() {
-        return payments;
+    public JSONObject getPaymentsLayer() {
+        return paymentsLayer;
     }
 
-    public void setPayments(JSONObject payments) {
-        this.payments = payments;
+    public void setPaymentsLayer(JSONObject paymentsLayer) {
+        this.paymentsLayer = paymentsLayer;
     }
 
 
@@ -42,11 +45,19 @@ public class ParliamentMember {
         this.voyages = voyages;
     }
 
+    public boolean getHasVisitedItaly() {
+        return hasVisitedItaly;
+    }
+
+    public void setHasVisitedItaly(boolean hasVisitedItaly) {
+        this.hasVisitedItaly = hasVisitedItaly;
+    }
+
     public ParliamentMember(JSONObject member) {
         try {
             this.id = member.getString("id");
-            this.data = member.getJSONObject("data");
-            this.name = this.data.getString("ludzie.nazwa");
+            this.data = new MemberData(member.getJSONObject("data"));
+            this.name = this.data.getLudzieNazwa();
 
         } catch (JSONException e) {
             System.out.println("Caught exception while initializing parliament member\n" + e.toString());
@@ -68,7 +79,20 @@ public class ParliamentMember {
 
             }
         }
+        this.hasVisitedItaly = haveIVisitedItaly(this.getVoyages());
 
+
+    }
+    private boolean haveIVisitedItaly(List<Voyage> voyages){
+        boolean result = false;
+        Iterator<Voyage> i = voyages.iterator();
+        while (i.hasNext() && !result){
+            Voyage voyage = i.next();
+            if (voyage.getCountryCode().equals("IT")){
+                result = true;
+            }
+        }
+        return result;
     }
     public void setId(String id) {
         this.id = id;
@@ -83,6 +107,7 @@ public class ParliamentMember {
 
         return id;
     }
+    /*
     public void setData(JSONObject data) {
         this.data = data;
     }
@@ -90,6 +115,7 @@ public class ParliamentMember {
 
         return data;
     }
+    */
 
     public Double getDrobneNaprawy() {
         String json = "";
@@ -98,14 +124,14 @@ public class ParliamentMember {
             json = ParliamentSeeker.readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/" + this.getId()
                     + ".json?layers[]=wydatki");
             JSONObject obj = new JSONObject(json);
-            this.setPayments(obj.getJSONObject("layers").getJSONObject("wydatki"));
+            this.setPaymentsLayer(obj.getJSONObject("layers").getJSONObject("wydatki"));
         }
         catch (Exception e){
             ParliamentSeeker.handleException(e);
         }
 
         try {
-            result = Double.parseDouble(this.getPayments()
+            result = Double.parseDouble(this.getPaymentsLayer()
                     .getJSONArray("roczniki")
                     .getJSONObject(0).getJSONArray("pola").getString(12));
         } catch (JSONException e) {
@@ -117,21 +143,10 @@ public class ParliamentMember {
 
     public Double getSumOfPayments() throws JSONException {
         Double sumOfPayments = 0.0;
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_biuro");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_ekspertyzy");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_inne");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_materialy_biurowe");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_podroze_pracownikow");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_przejazdy");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_spotkania");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_srodki_trwale");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_taksowki");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_telekomunikacja");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_wynagrodzenia_pracownikow");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_biuro_zlecenia");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_refundacja_kwater_pln");
-        sumOfPayments += this.getData().getDouble("poslowie.wartosc_wyjazdow");
-
+        for (Double payment :
+                this.data.getPaymentsList()) {
+            sumOfPayments+=payment;
+        }
         return sumOfPayments;
 
 

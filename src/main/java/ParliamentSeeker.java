@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static java.lang.System.exit;
@@ -63,144 +64,105 @@ public class ParliamentSeeker {
                 result = getMaxNumberOfDaysAbroadOpNo5(options);
                 break;
             }
-         /*   case 6:{
-                result = executeOptionNumber6(options);
+            case 6:{
+                result = getMostExpensiveVoyageOfMemberOpNo6(options);
                 break;
             }
             case 7:{
-                result = executeOptionNumber7(options);
+                result = getMembersHavingVisitedItalyOpNo7(options);
                 break;
-            }*/
+            }
         }
 
         return result;
     }
 
-/*
-    private String executeOptionNumber7(Options options){
-        String result = "";
-        String countryCodeTemplate = "IT";
-        List<String> idList = idList(options);
+
+    private String getMembersHavingVisitedItalyOpNo7(Options options){
+        List<ParliamentMember> idList = memberList(options);
         List<String> resultList = new LinkedList<String>();
-        Boolean hasVisitedItaly;
-        String hasVisitedItalyMemberId = "";
-        String hasVisitedItalyMemberFullName = "";
-        for (String id :
+
+        ParliamentMember parliamentMember = null;
+        for (ParliamentMember member :
                 idList) {
-            hasVisitedItaly = false;
             try {
-                json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/"+ id + ".json?layers[]=wyjazdy");
+                json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/"+ member.getId() + ".json?layers[]=wyjazdy");
             }
             catch (Exception e){
-                System.out.println("Internal application error: \n" + e.toString());
-                exit(1);
+                handleException(e);
             }
 
             try {
                 JSONObject obj = new JSONObject(json);
-                JSONObject tmp = obj.getJSONObject("layers");
-                try {
-                    JSONObject tmp2 = tmp.getJSONObject("wyjazdy");        //exception driven developement
-                }catch (JSONException e){
-                    try {
-                        for (int i = 0; i < tmp.getJSONArray("wyjazdy").length() && !hasVisitedItaly; i++) {
-                            if (tmp.getJSONArray("wyjazdy").getJSONObject(i).getString("country_code")
-                                    .equals(countryCodeTemplate)){
-                                hasVisitedItaly = true;
-                                resultList.add("\nname: " +
-                                        obj.getJSONObject("data").getString("ludzie.nazwa"));
-                            }
-                         }
-                    }
-                    catch (JSONException e2){
-                        System.out.println("Internal application error: \n" + e.toString());
-                        exit(1);
-                    }
-                }
+                parliamentMember = new ParliamentMember(obj);
 
-                System.out.println(hasVisitedItaly.toString() + "     processing...");
+                System.out.println(parliamentMember.getHasVisitedItaly() + "     processing...");
+                if (parliamentMember.getHasVisitedItaly()){
+                    resultList.add(parliamentMember.getName());
+                }
             }catch (JSONException e){
-                System.out.println("Internal application error: \n" + e.toString());
-                exit(1);
+                handleJSONException(e);
             }
         }
 
-        result = resultList.toString();
 
 
-
-
-        return result;
+        return resultList.toString();
     }
 
-    private String executeOptionNumber6(Options options){
+    private String getMostExpensiveVoyageOfMemberOpNo6(Options options){
         String result = "";
         Double tmpMostExpensiveVoyage = 0.0;
         Double maxMostExpensiveVoyage = 0.0;
-        Double tmpTmpMostExpensiveJourney = 0.0;
-        List<String> idList = idList(options);
-        String mostExpensiveVoyageMemberId = "";
-        String mostExpensiveVoyageMemberFullName = "";
-        for (String id :
+        List<ParliamentMember> idList = memberList(options);
+        ParliamentMember parliamentMember = null;
+        ParliamentMember mostExpensiveVoyageMember = null;
+
+        for (ParliamentMember  member :
                 idList) {
             try {
-                json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/"+ id + ".json?layers[]=wyjazdy");
+                json = readUrl("https://api-v3.mojepanstwo.pl/dane/poslowie/"+ member.getId() + ".json?layers[]=wyjazdy");
             }
             catch (Exception e){
-                System.out.println("Internal application error: \n" + e.toString());
-                exit(1);
+                handleException(e);
             }
 
             try {
                 JSONObject obj = new JSONObject(json);
-                tmpMostExpensiveVoyage = 0.0;//obj.getJSONObject("layers").getJSONArray("wyjazdy").length();
-                JSONObject tmp = obj.getJSONObject("layers");
-                try {
-                    JSONObject tmp2 = tmp.getJSONObject("wyjazdy");        //exception driven developement: FIXME
-                    tmpMostExpensiveVoyage = 0.0;
-                }catch (JSONException e){
-                    try {
-                        tmpTmpMostExpensiveJourney = 0.0;
-                        for (int i = 0; i < tmp.getJSONArray("wyjazdy").length(); i++) {
-                            tmpTmpMostExpensiveJourney += Double.parseDouble
-                                    (tmp.getJSONArray("wyjazdy").getJSONObject(i).getString("koszt_suma"));
-                        }
-                        tmpMostExpensiveVoyage = tmpTmpMostExpensiveJourney;
+                tmpMostExpensiveVoyage = 0.0;
 
-                    }
-                    catch (JSONException e2){
-                        System.out.println("Internal application error: \n" + e.toString());
-                        exit(1);
+                parliamentMember = new ParliamentMember(obj);
+                for (Voyage voyage :
+                        parliamentMember.getVoyages()) {
+
+                    Double kosztSuma =  Double.parseDouble(voyage.getKosztSuma());
+                    if (kosztSuma > tmpMostExpensiveVoyage){
+                        tmpMostExpensiveVoyage = kosztSuma;
                     }
                 }
-
                 if (tmpMostExpensiveVoyage >= maxMostExpensiveVoyage){
                     maxMostExpensiveVoyage = tmpMostExpensiveVoyage;
-                    mostExpensiveVoyageMemberId = obj.getString("id");
-                    mostExpensiveVoyageMemberFullName = obj.getJSONObject("data").getString("ludzie.nazwa");
+                    mostExpensiveVoyageMember = parliamentMember;
                 }
                 System.out.println(tmpMostExpensiveVoyage + "  ::  " + maxMostExpensiveVoyage  + "      processing...");
             }catch (JSONException e){
-                System.out.println("Internal application error: \n" + e.toString());
-                exit(1);
+                handleJSONException(e);
             }
         }
 
-        result = "id: " + mostExpensiveVoyageMemberId +
-                "\n name: " + mostExpensiveVoyageMemberFullName +
+        result = "id: " + mostExpensiveVoyageMember.getId() +
+                "\n name: " + mostExpensiveVoyageMember.getName() +
                 "\n Most expensive voyage cost was : " +  String.format("%.2f",maxMostExpensiveVoyage);
-
-
 
 
         return result;
     }
-*/
+
     private String getMaxNumberOfDaysAbroadOpNo5(Options options){
         String result = "";
         Integer tmpDaysAbroad = 0;
         Integer maxDaysAbroad = 0;
-        List<ParliamentMember> idList = idList(options);
+        List<ParliamentMember> idList = memberList(options);
         ParliamentMember parliamentMember = null;
         ParliamentMember maxDaysAbroadMember=null;
 
@@ -234,8 +196,8 @@ public class ParliamentSeeker {
         }
 
         result = "id: " + maxDaysAbroadMember.getId() +
-                "\n name: " + maxDaysAbroadMember.getName() +
-                "\n DaysAbroad: " +  maxDaysAbroad;
+                "\nname: " + maxDaysAbroadMember.getName() +
+                "\nDaysAbroad: " +  maxDaysAbroad;
 
         return result;
     }
@@ -247,7 +209,7 @@ public class ParliamentSeeker {
         ParliamentMember parliamentMember = null;
         ParliamentMember maxNumberOfVoyagesMember = null;
 
-        List<ParliamentMember> members = idList(options);
+        List<ParliamentMember> members = memberList(options);
         for (ParliamentMember member :
                 members) {
             try {
@@ -472,8 +434,8 @@ public class ParliamentSeeker {
     }
 
 
-    //Create list of all id's of members from specified term
-    private List<ParliamentMember> idList(Options options){
+    //Create list of all members from specified term
+    private List<ParliamentMember> memberList(Options options){
         ParliamentMember parliamentMember = null;
         List<ParliamentMember> result = new ArrayList<ParliamentMember>();
         try {
