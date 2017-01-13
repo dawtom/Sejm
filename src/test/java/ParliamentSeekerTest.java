@@ -12,7 +12,7 @@ public class ParliamentSeekerTest {
     public void display() throws Exception {
         String[] args = {"8", "2","Ewa","Kopacz"};
         Options options = new OptionsParser().parseOptions(args);
-        assertTrue(new ParliamentSeeker().getStringToDisplay(options).endsWith("170,50"));
+        assertTrue(new ParliamentDisplayer().getStringToDisplay(options).endsWith("170,50"));
     }
 
 }

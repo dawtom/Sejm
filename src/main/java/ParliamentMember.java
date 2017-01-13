@@ -13,45 +13,13 @@ import static java.lang.System.exit;
  * Created by Dawid Tomasiewicz on 11.01.17.
  */
 public class ParliamentMember {
+
     private String id = "";
     private String name = "";
     private MemberData data;
     private JSONObject paymentsLayer;
     private List<Voyage> voyages = new ArrayList<Voyage>();
     private boolean hasVisitedItaly;
-
-    private JSONObject getPaymentsLayer() {
-        return paymentsLayer;
-    }
-
-    private void setPaymentsLayer(JSONObject paymentsLayer) {
-        this.paymentsLayer = paymentsLayer;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Voyage> getVoyages() {
-        return voyages;
-    }
-
-    public void setVoyages(List<Voyage> voyages) {
-        this.voyages = voyages;
-    }
-
-    public boolean getHasVisitedItaly() {
-        return hasVisitedItaly;
-    }
-
-    public void setHasVisitedItaly(boolean hasVisitedItaly) {
-        this.hasVisitedItaly = hasVisitedItaly;
-    }
 
     public ParliamentMember(JSONObject member) {
         try {
@@ -66,7 +34,7 @@ public class ParliamentMember {
         JSONObject tmp;
         JSONArray tmpArray;
         try {
-             tmp = member.getJSONObject("layers").getJSONObject("wyjazdy");
+            tmp = member.getJSONObject("layers").getJSONObject("wyjazdy");
         }catch (JSONException e){
             try{
                 tmpArray = member.getJSONObject("layers").getJSONArray("wyjazdy");
@@ -83,6 +51,31 @@ public class ParliamentMember {
 
 
     }
+
+    //GETTERS
+    public String getId() {
+
+        return id;
+    }
+    public String getName() {
+        return name;
+    }
+    public boolean getHasVisitedItaly() {
+        return hasVisitedItaly;
+    }
+    private JSONObject getPaymentsLayer() {
+        return paymentsLayer;
+    }
+    public List<Voyage> getVoyages() {
+        return voyages;
+    }
+
+    //SETTERS
+    private void setPaymentsLayer(JSONObject paymentsLayer) {
+        this.paymentsLayer = paymentsLayer;
+    }
+
+    //check if this has visited Italy
     private boolean haveIVisitedItaly(List<Voyage> voyages){
         boolean result = false;
         Iterator<Voyage> i = voyages.iterator();
@@ -95,30 +88,7 @@ public class ParliamentMember {
         return result;
     }
 
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-
-
-
-
-
-    public String getId() {
-
-        return id;
-    }
-    /*
-    public void setData(JSONObject data) {
-        this.data = data;
-    }
-    public JSONObject getData() {
-
-        return data;
-    }
-    */
-
+    //check how much this member has paid for "drobne naprawy"
     public Double getDrobneNaprawy() {
         String json = "";
         Double result = 0.0;
@@ -142,7 +112,7 @@ public class ParliamentMember {
         return  result;
     }
 
-
+    //check the sum of payments of this member
     public Double getSumOfPayments() throws JSONException {
         Double sumOfPayments = 0.0;
         for (Double payment :
@@ -152,5 +122,12 @@ public class ParliamentMember {
         return sumOfPayments;
 
 
-    }}
+    }
 
+    @Override
+    public  String toString(){
+        return "id: " + this.getId().toString() + "\n" +
+                "name: " + this.getName();
+    }
+
+}

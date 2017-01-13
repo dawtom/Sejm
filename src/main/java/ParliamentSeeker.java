@@ -37,48 +37,7 @@ public class ParliamentSeeker {
 
     }
 
-    public void display(Options options) {
-        System.out.println(getStringToDisplay(options));
-    }
-
-    public String getStringToDisplay(Options options) {
-        String result = "";
-        switch (options.getOptionNumber()){
-            case 1:{
-                result = getSumOfPaymentsWithGivenMemberNameOpNo1(options);
-                break;
-            }
-            case 2:{
-                result = getDrobneNaprawyPaymentsWithGivenNameOpNo2(options);
-                break;
-            }
-            case 3:{
-                result = getAverageSumOfPaymentsOpNo3(options);
-                break;
-            }
-            case 4:{
-                result = getMaxNumberOfVoyagesOpNo4(options);
-                break;
-            }
-            case 5:{
-                result = getMaxNumberOfDaysAbroadOpNo5(options);
-                break;
-            }
-            case 6:{
-                result = getMostExpensiveVoyageOfMemberOpNo6(options);
-                break;
-            }
-            case 7:{
-                result = getMembersHavingVisitedItalyOpNo7(options);
-                break;
-            }
-        }
-
-        return result;
-    }
-
-
-    private String getMembersHavingVisitedItalyOpNo7(Options options){
+    public String getMembersHavingVisitedItalyOpNo7(Options options){
         List<ParliamentMember> idList = memberList(options);
         List<String> resultList = new LinkedList<String>();
 
@@ -98,7 +57,7 @@ public class ParliamentSeeker {
 
                 System.out.println(parliamentMember.getHasVisitedItaly() + "     processing...");
                 if (parliamentMember.getHasVisitedItaly()){
-                    resultList.add(parliamentMember.getName());
+                    resultList.add(parliamentMember.getName()); // not using toString to keep list clean (only names, no ids)
                 }
             }catch (JSONException e){
                 handleJSONException(e);
@@ -110,7 +69,7 @@ public class ParliamentSeeker {
         return resultList.toString();
     }
 
-    private String getMostExpensiveVoyageOfMemberOpNo6(Options options){
+    public String getMostExpensiveVoyageOfMemberOpNo6(Options options){
         String result = "";
         Double tmpMostExpensiveVoyage;
         Double maxMostExpensiveVoyage = 0.0;
@@ -150,15 +109,14 @@ public class ParliamentSeeker {
             }
         }
 
-        result = "id: " + mostExpensiveVoyageMember.getId() +
-                "\n name: " + mostExpensiveVoyageMember.getName() +
+        result = mostExpensiveVoyageMember.toString() +
                 "\n Most expensive voyage cost was : " +  String.format("%.2f",maxMostExpensiveVoyage);
 
 
         return result;
     }
 
-    private String getMaxNumberOfDaysAbroadOpNo5(Options options){
+    public String getMaxNumberOfDaysAbroadOpNo5(Options options){
         String result;
         Integer tmpDaysAbroad;
         Integer maxDaysAbroad = 0;
@@ -195,14 +153,13 @@ public class ParliamentSeeker {
             }
         }
 
-        result = "id: " + maxDaysAbroadMember.getId() +
-                "\nname: " + maxDaysAbroadMember.getName() +
+        result = maxDaysAbroadMember.toString() +
                 "\nDaysAbroad: " +  maxDaysAbroad;
 
         return result;
     }
 
-    private String getMaxNumberOfVoyagesOpNo4(Options options){
+    public String getMaxNumberOfVoyagesOpNo4(Options options){
         String result;
         Integer tmpNumberOfVoyages;
         Integer maxNumberOfVoyages = -1 ;
@@ -236,14 +193,13 @@ public class ParliamentSeeker {
             }
         }
 
-        result = "id: " + maxNumberOfVoyagesMember.getId() +
-                "\n name: " + maxNumberOfVoyagesMember.getName() +
+        result = maxNumberOfVoyagesMember.toString() +
                 "\n Number of voyages: " +  maxNumberOfVoyages;
 
         return result;
     }
 
-    private String getAverageSumOfPaymentsOpNo3(Options options){
+    public String getAverageSumOfPaymentsOpNo3(Options options){
 
         String result;
         Double sumOfPayments = 0.0;
@@ -307,7 +263,7 @@ public class ParliamentSeeker {
         return result;
     }
 
-    private String getDrobneNaprawyPaymentsWithGivenNameOpNo2(Options options) {
+    public String getDrobneNaprawyPaymentsWithGivenNameOpNo2(Options options) {
         String result = "";
         Double drobneNaprawy = 0.0;
         boolean findMember = false;
@@ -361,7 +317,7 @@ public class ParliamentSeeker {
 
         if (findMember){
             drobneNaprawy += parliamentMember.getDrobneNaprawy();
-            result = "id: " + parliamentMember.getId() + "\nname: " + parliamentMember.getName() + "\ndrobne naprawy: "
+            result = parliamentMember.toString() +  "\ndrobne naprawy: "
                     + String.format("%.2f",drobneNaprawy);
 
         }
@@ -372,7 +328,7 @@ public class ParliamentSeeker {
         return result;
     }
 
-    private String getSumOfPaymentsWithGivenMemberNameOpNo1(Options options) {
+    public String getSumOfPaymentsWithGivenMemberNameOpNo1(Options options) {
         String result = "";
         Double sumOfPayments = 0.0;
         boolean findMember = false;
@@ -436,6 +392,7 @@ public class ParliamentSeeker {
     //Create list of all members from specified term
     private List<ParliamentMember> memberList(Options options){
         ParliamentMember parliamentMember;
+        System.out.println("Reading parliament members list of term number " + options.getParliamentTerm() + " . . .");
         List<ParliamentMember> result = new ArrayList<ParliamentMember>();
         try {
             json = readUrl(
@@ -471,8 +428,7 @@ public class ParliamentSeeker {
                     obj = new JSONObject(json);
                 }
                 catch (Exception e){
-                    System.out.println("Internal application error: \n" + e.toString());
-                    exit(1);
+                    handleException(e);
                 }
             }
 
